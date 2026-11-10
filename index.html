@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> Online</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+@@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+
+:root {
+  --dark: #101010;
+  --green: #252525;
+  --emerald: #333333;
+  --gold: #D5B66A;
+  --light: #F1F1F1;
+  --white: #FFFFFF;
+  --muted: #858585;
+  --border: #E2E2E2;
+  --red: #D94B55;
+}
+
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--light);
+  color: #18352a;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  transition: .25s ease;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* =========================
+   LOGIN DAN REGISTER
+========================= */
+
+.auth {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+  background:
+    radial-gradient(circle at 10% 10%, #246e4e 0, transparent 35%),
+    linear-gradient(135deg, #04130d, #0b3927 55%, #071b14);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth::before {
+  content: "";
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  border: 1px solid #d5b66a35;
+  border-radius: 50%;
+  right: -180px;
+  top: -170px;
+}
+
+.auth::after {
+  content: "";
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  border: 1px solid #d5b66a25;
+  border-radius: 50%;
+  left: -150px;
+  bottom: -150px;
+}
+
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  padding: 35px;
+  border-radius: 25px;
+  background: #ffffff;
+  box-shadow: 0 25px 80px #00000045;
+  animation: appear .6s ease;
+}
+
+.logo {
+  color: var(--green);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.logo-image {
+  width: 75px;
+  height: 75px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: white;
+  margin-bottom: 15px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.auth h2 {
+  margin: 25px 0 8px;
+  font-size: 24px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 17px 0 8px;
+}
+
+input, select {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #dce8df;
+  border-radius: 11px;
+  background: #fbfdfb;
+  outline: none;
+  color: #18352a;
+  transition: .2s;
+}
+
+input:focus, select:focus {
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 3px #087f5b15;
+}
+
+.btn {
+  width: 100%;
+  border: 0;
+  border-radius: 11px;
+  padding: 15px;
+  margin-top: 20px;
+  background: linear-gradient(120deg, var(--emerald), var(--green));
+  color: white;
+  font-weight: 800;
+  box-shadow: 0 8px 20px #087f5b30;
+}
+
+.btn:hover, .submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px #087f5b35;
+}
+
+.btn:disabled, .submit:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.switch {
+  border: 0;
+  background: transparent;
+  color: var(--emerald);
+  font-weight: 800;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 13px;
+}
+
+.error {
+  color: #e11d48;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+/* =========================
+   DASHBOARD UTAMA
+========================= */
+
+.app {
+  max-width: 1250px;
+  margin: auto;
+  padding: 30px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 15px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.header-brand .logo-image {
+  width: 58px;
+  height: 58px;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.logout {
+  border: 0;
+  background: #ffe9ed;
+  color: #d72f4c;
+  padding: 11px 17px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.logout:hover {
+  background: #ffd5dd;
+}
+
+.status {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* =========================
+   BANNER LAWGRITY
+========================= */
+
+.welcome {
+  min-height: 260px;
+  padding: 40px;
+  border-radius: 22px;
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  background:
+    linear-gradient(90deg,
+      rgba(3, 18, 12, .94),
+      rgba(3, 18, 12, .68),
+      rgba(3, 18, 12, .25)
+    ),
+    url('images/banner-lawgrity.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  box-shadow: 0 15px 35px #071b1420;
+}
+
+.welcome::after {
+  content: "LAWGRITY";
+  position: absolute;
+  right: 25px;
+  bottom: -30px;
+  font-size: clamp(55px, 9vw, 115px);
+  font-weight: 800;
+  color: #ffffff0a;
+  pointer-events: none;
+}
+
+.welcome-label {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 4px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.welcome h2 {
+  font-size: clamp(24px, 4vw, 36px);
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.welcome p {
+  font-size: 13px;
+  color: #d1dfd6;
+  max-width: 500px;
+  line-height: 1.8;
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================
+   KARTU SALDO
+========================= */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 23px;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 5px 20px #0a342010;
+  transition: .3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px #0a342018;
+}
+
+.card p {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.card h2 {
+  font-size: clamp(18px, 2vw, 25px);
+  margin: 15px 0;
+  overflow-wrap: anywhere;
+}
+
+.card.green {
+  background: linear-gradient(135deg, #105d3d, #06291b);
+  color: white;
+  border: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.card.green::after {
+  content: "₮";
+  position: absolute;
+  right: 15px;
+  bottom: -35px;
+  font-size: 130px;
+  color: #ffffff0a;
+  font-weight: 800;
+}
+
+.card.green p {
+  color: #c1e5d1;
+}
+
+/* =========================
+   GRID DAN PANEL
+========================= */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.panel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 5px 20px #0a342008;
+}
+
+.panel h3 {
+  font-size: 15px;
+  margin-bottom: 20px;
+  font-weight: 800;
+}
+
+#chart {
+  width: 100%;
+  max-height: 290px;
+}
+
+/* =========================
+   FORM TRANSAKSI
+========================= */
+
+.form-title {
+  background: linear-gradient(120deg, #105d3d, #071b14);
+  color: white;
+  margin: -24px -24px 22px;
+  padding: 23px 24px;
+  border-radius: 18px 18px 0 0;
+}
+
+.switch-type {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-bottom: 18px;
+}
+
+.switch-type button {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f5f8f5;
+  color: #53665b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.switch-type button:hover {
+  transform: translateY(-2px);
+}
+
+.switch-type .active-in {
+  background: #d9f5e6;
+  border-color: #9edbb8;
+  color: #087f5b;
+}
+
+.switch-type .active-out {
+  background: #ffe3e9;
+  border-color: #ffc1cc;
+  color: #e11d48;
+}
+
+.submit {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(120deg, #087f5b, #064e3b);
+  color: white;
+  border: 0;
+  border-radius: 11px;
+  font-weight: 800;
+  margin-top: 20px;
+  transition: .25s;
+}
+
+/* =========================
+   RIWAYAT TRANSAKSI
+========================= */
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.tx {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #edf2ee;
+  gap: 10px;
+}
+
+.tx:last-child {
+  border: 0;
+}
+
+.tx-name {
+  font-weight: 800;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.tx-meta {
+  font-size: 11px;
+  color: #91a098;
+  margin-top: 6px;
+}
+
+.plus {
+  color: #059669;
+  font-weight: 800;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.minus {
+  color: #e11d48;
+  font-weight: 800;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.delete {
+  background: #fff0f2;
+  color: #e11d48;
+  border: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.delete:hover {
+  background: #ffd9e0;
+}
+
+.empty {
+  text-align: center;
+  padding: 30px 15px;
+  color: #91a098;
+  font-size: 13px;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.filters select {
+  font-size: 12px;
+  padding: 10px;
+  background: #f8faf8;
+}
+
+#refresh {
+  font-size: 12px;
+}
+
+/* =========================
+   ANIMASI
+========================= */
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app {
+  animation: appear .5s ease;
+}
+
+/* =========================
+   RESPONSIVE HP
+========================= */
+
+@media (max-width: 850px) {
+  .app {
+    padding: 20px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding: 14px;
+    padding-bottom: 35px;
+  }
+
+  header {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-brand .logo-image {
+    width: 45px;
+    height: 45px;
+  }
+
+  .header-brand .logo {
+    font-size: 20px;
+  }
+
+  .header-right {
+    gap: 5px;
+  }
+
+  .header-right .status {
+    display: none;
+  }
+
+  .logout {
+    padding: 9px 11px;
+    font-size: 11px;
+  }
+
+  .welcome {
+    min-height: 230px;
+    padding: 25px;
+    margin-bottom: 17px;
+    background-position: center;
+  }
+
+  .welcome h2 {
+    font-size: 23px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .card {
+    padding: 19px;
+  }
+
+  .card h2 {
+    font-size: 22px;
+  }
+
+  .grid {
+    gap: 15px;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  .form-title {
+    margin: -18px -18px 18px;
+    padding: 19px;
+  }
+
+  .auth-card {
+    padding: 26px;
+  }
+
+  .tx {
+    flex-wrap: wrap;
+  }
+}
+
+.auth-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.auth-brand img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.auth-brand h1 {
+  color: #105239;
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.auth-brand p {
+  color: #a68a49;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-top: 7px;
+  white-space: nowrap;
+}
+
+/* ===== LAWGRITY BLACK & GOLD THEME ===== */
+
+body {
+  background: #F1F1F1;
+  color: #171717;
+}
+
+/* LOGIN */
+.auth {
+  background:
+    radial-gradient(circle at 15% 15%, #454545 0, transparent 35%),
+    linear-gradient(135deg, #080808, #252525, #101010);
+}
+
+.auth-card {
+  background: #FFFFFF;
+  border: 1px solid #D5B66A;
+}
+
+.logo {
+  color: #171717;
+}
+
+.brand-subtitle,
+.welcome-label {
+  color: #B3944C;
+}
+
+/* INPUT */
+input, select {
+  background: #F8F8F8;
+  border: 1px solid #D8D8D8;
+  color: #171717;
+}
+
+input:focus, select:focus {
+  border-color: #D5B66A;
+  box-shadow: 0 0 0 3px #D5B66A25;
+}
+
+/* BUTTON */
+.btn, .submit {
+  background: linear-gradient(120deg, #252525, #080808);
+  color: #D5B66A;
+  border: 1px solid #B99A52;
+}
+
+.switch {
+  color: #A5863F;
+}
+
+/* HEADER */
+.app {
+  color: #171717;
+}
+
+/* WELCOME BANNER */
+.welcome {
+  background:
+    linear-gradient(100deg,
+      rgba(0,0,0,.96),
+      rgba(25,25,25,.85),
+      rgba(25,25,25,.55)
+    ),
+    url('images/banner-lawgrity.jpg');
+
+  background-size: cover;
+  background-position: center;
+  border: 1px solid #B99A52;
+}
+
+/* CARDS */
+.card {
+  background: #FFFFFF;
+  border: 1px solid #DDDDDD;
+}
+
+.card.green {
+  background: linear-gradient(135deg, #080808, #303030);
+  color: #FFFFFF;
+  border: 1px solid #B99A52;
+}
+
+.card.green p {
+  color: #D5B66A;
+}
+
+/* PANELS */
+.panel {
+  background: #FFFFFF;
+  border: 1px solid #DDDDDD;
+}
+
+/* FORM TITLE */
+.form-title {
+  background: linear-gradient(120deg, #111111, #333333);
+  color: #D5B66A;
+  border-bottom: 2px solid #D5B66A;
+}
+
+/* TYPE BUTTON */
+.switch-type .active-in {
+  background: #F0E8D4;
+  border-color: #D5B66A;
+  color: #715A25;
+}
+
+.switch-type .active-out {
+  background: #EEEEEE;
+  border-color: #999999;
+  color: #333333;
+}
+
+/* TRANSACTION */
+.plus {
+  color: #92732D;
+}
+
+.minus {
+  color: #D94B55;
+}
+
+/* REFRESH */
+.delete {
+  background: #EEEEEE;
+  color: #333333;
+}
+
+/* LOGOUT */
+.logout {
+  background: #EEEEEE;
+  color: #222222;
+  border: 1px solid #D5B66A;
+}
+
+.logout:hover {
+  background: #E4D8BA;
+}
+
+/* ANIMATION */
+.card:hover {
+  border-color: #D5B66A;
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- LOGIN / REGISTER -->
+<section class="auth" id="authScreen">
+  <div class="auth-card">
+
+    <div class="auth-brand">
+      <img
+        src="images/logo-lawgrity.png"
+        alt="Logo LAWGRITY"
+      >
+
+      <h1>LAWGRITY</h1>
+      <p>ILMU HUKUM B • 2026</p>
+    </div>
+
+    <p class="muted">
+      Keuangan lebih teratur, masa depan lebih baik.
+    </p>
+
+    <h2 id="authTitle">Selamat datang!</h2>
+
+    <p class="muted" id="authSubtitle">
+      Login untuk mengakses keuanganmu.
+    </p>
+
+    <form id="authForm">
+      <label>Email</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="email@contoh.com"
+        required
+      >
+
+      <label>Password</label>
+      <input
+        id="password"
+        type="password"
+        minlength="6"
+        placeholder="Minimal 6 karakter"
+        required
+      >
+
+      <button class="btn" id="authButton">
+        Login
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <span id="switchText">Belum punya akun?</span>
+      <button class="switch" id="switchMode">
+        Daftar
+      </button>
+    </div>
+
+    <p class="error" id="authError"></p>
+
+  </div>
+</section>
+
+
+<!-- DASHBOARD -->
+<section class="app hidden" id="appScreen">
+
+<header>
+  <div class="header-brand">
+    <img
+      src="images/logo-lawgrity.png"
+      class="logo-image"
+      alt="Logo LAWGRITY"
+    >
+
+    <div>
+      <div class="logo">LAWGRITY</div>
+      <p class="muted">Finance Dashboard • Class B</p>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <span class="status" id="userEmail"></span>
+    <button class="logout" id="logout">Keluar ↗</button>
+  </div>
+</header>
+
+<div class="welcome">
+  <span class="welcome-label">
+    LAWGRITY • ILMU HUKUM B • 2026
+  </span>
+
+  <h2>Halo, selamat datang! </h2>
+
+  <p>
+    Transparansi keuangan adalah tanggung jawab bersama.
+    Catat, kelola, dan pantau keuangan kelas dengan mudah.
+  </p>
+</div>
+
+<div class="cards">
+  <div class="card green">
+    <p>💳 Total Saldo</p>
+    <h2 id="balance">Rp0</h2>
+    <p>Pemasukan dikurangi pengeluaran</p>
+  </div>
+  <div class="card">
+    <p>🟢 Total Pemasukan</p>
+    <h2 id="income">Rp0</h2>
+    <p>Seluruh pemasukan</p>
+  </div>
+  <div class="card">
+    <p>🔴 Total Pengeluaran</p>
+    <h2 id="expense">Rp0</h2>
+    <p>Seluruh pengeluaran</p>
+  </div>
+</div>
+
+<div class="grid">
+  <div>
+    <div class="panel">
+      <h3>📊 Grafik Keuangan</h3>
+      <canvas id="chart"></canvas>
+    </div>
+
+    <div class="panel" style="margin-top:18px">
+      <div class="row">
+        <h3>🕒 Riwayat Transaksi</h3>
+        <button id="refresh" class="switch">↻ Refresh</button>
+      </div>
+      <div class="filters">
+        <select id="filter">
+          <option value="all">Semua transaksi</option>
+          <option value="income">Pemasukan</option>
+          <option value="expense">Pengeluaran</option>
+        </select>
+      </div>
+      <div id="list"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 class="form-title">＋ Tambah Transaksi</h3>
+
+    <div class="switch-type">
+      <button id="inBtn" class="active-in" type="button">↓ Pemasukan</button>
+      <button id="outBtn" type="button">↑ Pengeluaran</button>
+    </div>
+
+    <form id="txForm">
+      <label>Nama transaksi</label>
+      <input id="txName" placeholder="Contoh: Uang saku" required>
+
+      <label>Kategori</label>
+      <select id="category">
+        <option>Uang Kelas </option>
+
+      </select>
+
+      <label>Nominal (Rp)</label>
+      <input id="amount" type="number" min="1" placeholder="Contoh: 50000" required>
+
+      <label>Tanggal</label>
+      <input id="txDate" type="date" required>
+
+      <button class="submit" id="saveBtn">💾 Simpan Transaksi</button>
+      <p class="status" id="txStatus" style="margin-top:12px"></p>
+    </form>
+  </div>
+</div>
+</section>
+
+<script>
+// =============================================
+// 1. KONFIGURASI SUPABASE
+// Ganti dua nilai ini dengan milik project kamu
+// Supabase -> Project Settings -> API
+// =============================================
+
+const SUPABASE_URL = "https://dwdwuetzwryvjiunyesn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_vPKh4b-U4GtZcuo1MUlRgg__C1Nhi7u";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+// =============================================
+
+let currentUser = null;
+let type = "income";
+let transactions = [];
+let chart = null;
+
+const $ = id => document.getElementById(id);
+
+const rupiah = n => new Intl.NumberFormat("id-ID", {
+  style:"currency",
+  currency:"IDR",
+  maximumFractionDigits:0
+}).format(n);
+
+function todayString() {
+  const d = new Date();
+  return d.getFullYear() + "-" +
+    String(d.getMonth()+1).padStart(2,"0") + "-" +
+    String(d.getDate()).padStart(2,"0");
+}
+
+$("txDate").value = todayString();
+
+// LOGIN / REGISTER MODE
+
+let registerMode = false;
+
+$("switchMode").onclick = () => {
+  registerMode = !registerMode;
+  $("authTitle").textContent = registerMode ? "Buat akun baru" : "Selamat datang!";
+  $("authSubtitle").textContent = registerMode
+    ? "Daftar untuk mulai mencatat keuangan."
+    : "Login untuk mengakses keuanganmu.";
+  $("authButton").textContent = registerMode ? "Daftar" : "Login";
+  $("switchText").textContent = registerMode
+    ? "Sudah punya akun?" : "Belum punya akun?";
+  $("switchMode").textContent = registerMode ? "Login" : "Daftar";
+  $("authError").textContent = "";
+};
+
+// AUTH
+
+$("authForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  $("authButton").disabled = true;
+  $("authButton").textContent = "Memproses...";
+  $("authError").textContent = "";
+
+  const email = $("email").value.trim();
+  const password = $("password").value;
+
+  let result;
+
+  if (registerMode) {
+    result = await db.auth.signUp({email,password});
+  } else {
+    result = await db.auth.signInWithPassword({email,password});
+  }
+
+  $("authButton").disabled = false;
+  $("authButton").textContent = registerMode ? "Daftar" : "Login";
+
+  if (result.error) {
+    $("authError").textContent = result.error.message;
+    return;
+  }
+
+  if (registerMode && !result.data.session) {
+    $("authError").textContent =
+      "Pendaftaran berhasil! Periksa email untuk verifikasi, lalu login.";
+    return;
+  }
+
+  currentUser = result.data.user;
+  await enterApp();
+});
+
+// LOGOUT
+
+$("logout").onclick = async () => {
+  await db.auth.signOut();
+  currentUser = null;
+  $("appScreen").classList.add("hidden");
+  $("authScreen").classList.remove("hidden");
+};
+
+// AUTH SESSION
+
+async function checkSession() {
+  const {data} = await db.auth.getSession();
+
+  if (data.session) {
+    currentUser = data.session.user;
+    await enterApp();
+  }
+}
+
+async function enterApp() {
+  $("authScreen").classList.add("hidden");
+  $("appScreen").classList.remove("hidden");
+  $("userEmail").textContent = currentUser.email;
+
+  await loadTransactions();
+}
+
+// SELECT TRANSACTION TYPE
+
+function setType(t) {
+  type = t;
+  $("inBtn").className = t === "income" ? "active-in" : "";
+  $("outBtn").className = t === "expense" ? "active-out" : "";
+}
+
+$("inBtn").onclick = () => setType("income");
+$("outBtn").onclick = () => setType("expense");
+
+// LOAD ONLINE DATA
+
+async function loadTransactions() {
+  $("txStatus").textContent = "Memuat data...";
+
+  const {data,error} = await db
+    .from("transactions")
+    .select("*")
+    .order("date",{ascending:false})
+    .order("created_at",{ascending:false});
+
+  if (error) {
+    $("txStatus").textContent = "Gagal memuat: " + error.message;
+    return;
+  }
+
+  transactions = data || [];
+  $("txStatus").textContent = "";
+  render();
+}
+
+// SAVE TRANSACTION TO CLOUD
+
+$("txForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  if (!currentUser) return;
+
+  const payload = {
+    user_id: currentUser.id,
+    name: $("txName").value.trim(),
+    category: $("category").value,
+    amount: Number($("amount").value),
+    type,
+    date: $("txDate").value
+  };
+
+  if (!payload.name || payload.amount <= 0) return;
+
+  $("saveBtn").disabled = true;
+  $("saveBtn").textContent = "Menyimpan ke cloud...";
+
+  const {error} = await db.from("transactions").insert(payload);
+
+  $("saveBtn").disabled = false;
+  $("saveBtn").textContent = "💾 Simpan Transaksi";
+
+  if (error) {
+    $("txStatus").textContent = "Gagal: " + error.message;
+    return;
+  }
+
+  $("txForm").reset();
+  $("txDate").value = todayString();
+
+  $("txStatus").textContent = "Transaksi berhasil disimpan online! ✓";
+
+  await loadTransactions();
+});
+
+// DELETE ONLINE TRANSACTION
+
+async function removeTx(id) {
+  if (!confirm("Hapus transaksi ini?")) return;
+
+  const {error} = await db
+    .from("transactions")
+    .delete()
+    .eq("id",id)
+    .eq("user_id",currentUser.id);
+
+  if (error) {
+    alert("Gagal menghapus: " + error.message);
+    return;
+  }
+
+  await loadTransactions();
+}
+
+// RENDER DASHBOARD
+
+function render() {
+  const income = transactions
+    .filter(t => t.type === "income")
+    .reduce((a,t) => a + Number(t.amount),0);
+
+  const expense = transactions
+    .filter(t => t.type === "expense")
+    .reduce((a,t) => a + Number(t.amount),0);
+
+  $("balance").textContent = rupiah(income-expense);
+  $("income").textContent = rupiah(income);
+  $("expense").textContent = rupiah(expense);
+
+  const filter = $("filter").value;
+
+  const list = transactions.filter(t =>
+    filter === "all" || t.type === filter
+  );
+
+  if (!list.length) {
+    $("list").innerHTML =
+      '<div class="empty">Belum ada transaksi.</div>';
+  } else {
+    $("list").innerHTML = list.map(t => `
+      <div class="tx">
+        <div>
+          <div class="tx-name">${escapeHTML(t.name)}</div>
+          <div class="tx-meta">${escapeHTML(t.category)} · ${t.date}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="${t.type === "income" ? "plus" : "minus"}">
+            ${t.type === "income" ? "+" : "-"}${rupiah(t.amount)}
+          </span>
+          <button class="delete" onclick="removeTx('${t.id}')">✕</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  renderChart();
+}
+
+function escapeHTML(str) {
+  return String(str).replace(/[&<>"']/g,c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+// CHART
+
+function renderChart() {
+  const labels = [...new Set(transactions.map(t => t.date))].sort();
+
+  const income = labels.map(d =>
+    transactions.filter(t => t.date === d && t.type === "income")
+      .reduce((a,t) => a+Number(t.amount),0)
+  );
+
+  const expense = labels.map(d =>
+    transactions.filter(t => t.date === d && t.type === "expense")
+      .reduce((a,t) => a+Number(t.amount),0)
+  );
+
+  if (chart) chart.destroy();
+
+  chart = new Chart($("chart"), {
+    type:"line",
+    data:{
+      labels,
+      datasets:[
+        {
+          label:"Pemasukan",
+          data:income,
+          borderColor:"#059669",
+          backgroundColor:"#d1fae5",
+          fill:true,
+          tension:.35
+        },
+        {
+          label:"Pengeluaran",
+          data:expense,
+          borderColor:"#f43f5e",
+          backgroundColor:"#ffe4e6",
+          fill:true,
+          tension:.35
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{position:"bottom"}
+      },
+      scales:{
+        y:{beginAtZero:true},
+        x:{ticks:{maxTicksLimit:6}}
+      }
+    }
+  });
+}
+
+$("filter").onchange = render;
+$("refresh").onclick = loadTransactions;
+
+// START
+checkSession();
+</script>
+</body>
+</html>
